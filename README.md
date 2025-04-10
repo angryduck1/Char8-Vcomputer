@@ -1,48 +1,80 @@
-/////////////////////////////////// 
-//CPU OPCODES
+CPU Operations
+Below are the operations available for the CPU:
 
-1) LDA = 0x01; // Load value in accum
-2) STZ = 0x02; // Load value in Z
-3) STX = 0x03; // Load value in X
-4) ADD_Z = 0x04; // A += Z
-5) ADD_X = 0x05; // A += X
-6) SUB_Z = 0x06; // A -= Z
-7) SUB_X = 0x07; // A -= X
-8) SCF = 0x08; // CF = 1
-9) SZF = 0x09; // ZF = 1
-10) SNF = 0xA; // NF = 1
-11) JMS = 0xC; // Call subroutine
-12) END = 0x10; // END program
-13) IAC = 0xE2; // A += 1
-14) IZC = 0xE3; // Z += 1
-15) IXC = 0xE4; // X += 1
-16) DAC = 0xE5; // A -= 1
-17) DZC = 0xE6; // Z -= 1
-18) DXC = 0xE7; // X -= 1
-19) RAC = 0xE8; // A << 1 (A * 2) 
-20) RAZ = 0xE9; // Z << 1 (Z * 2) 
-21) RAX = 0xEA; // X << 1 (X * 2)
+LDA (0x01): Load value into the accumulator.
 
-22) JMP = 0xB; // JMP to address
-23) MPCF = 0xB1; // JMP to address if CF
-24) JMPZF = 0xB2; // JMP to address if ZF
-25) JMPNF = 0xB3; // JMP to address if NF
-26) JMPNCF = 0xB5; // JMP to address if !CF
-27) JMPNZF = 0xB6; // JMP to address if !ZF
-28) JMPNNF = 0xB7; // JMP to address if !CF
-29) JMPAC = 0xB8; // JMP to address if A == op
-30) JMPZ = 0xB9; // JMP to address if Z == op
-31) JMPCH = 0xBA; // JMP to address if TEMP CHAR == op
+STZ (0x02): Load value into the Z register.
 
-//////////////////////////////////////
-//TERMINAL OPCODES
+STX (0x03): Load value into the X register.
 
-32) BRK_PUT = 0xE; // Break and PRINT value from keyboard
-33) BRK_PUT_Z = 0xE1; // Break and PRINT Z char value
-34) BRK_PRINT_A = 0xC1; // Break and PRINT A value (not char)
+ADD_Z (0x04): Add the value from the Z register to the accumulator (A += Z).
 
-35) STVC = 0xF1; // Set VC value
-36) STVR = 0xF2; // Set VR value
+ADD_X (0x05): Add the value from the X register to the accumulator (A += X).
 
-37) IVC = 0xF3; // VC += 1
-38) IVR = 0xF4; // VR += 1
+SUB_Z (0x06): Subtract the value from the Z register from the accumulator (A -= Z).
+
+SUB_X (0x07): Subtract the value from the X register from the accumulator (A -= X).
+
+SCF (0x08): Set the carry flag (CF = 1).
+
+SZF (0x09): Set the zero flag (ZF = 1).
+
+SNF (0xA): Set the negative flag (NF = 1).
+
+JMS (0xC): Call a subroutine.
+
+END (0x10): End the program.
+
+IAC (0xE2): Increment the accumulator (A += 1).
+
+IZC (0xE3): Increment the Z register (Z += 1).
+
+IXC (0xE4): Increment the X register (X += 1).
+
+DAC (0xE5): Decrement the accumulator (A -= 1).
+
+DZC (0xE6): Decrement the Z register (Z -= 1).
+
+DXC (0xE7): Decrement the X register (X -= 1).
+
+RAC (0xE8): Multiply the accumulator by 2 (A << 1).
+
+RAZ (0xE9): Multiply the Z register by 2 (Z << 1).
+
+RAX (0xEA): Multiply the X register by 2 (X << 1).
+
+Jump Operations
+JMP (0xB): Jump to the specified address.
+
+JMPCF (0xB1): Jump to the address if the carry flag is set (CF).
+
+JMPZF (0xB2): Jump to the address if the zero flag is set (ZF).
+
+JMPNF (0xB3): Jump to the address if the negative flag is set (NF).
+
+JMPNCF (0xB5): Jump to the address if the carry flag is not set (!CF).
+
+JMPNZF (0xB6): Jump to the address if the zero flag is not set (!ZF).
+
+JMPNNF (0xB7): Jump to the address if the negative flag is not set (!NF).
+
+JMPAC (0xB8): Jump to the address if the accumulator equals the operand.
+
+JMPZ (0xB9): Jump to the address if the Z register equals the operand.
+
+JMPCH (0xBA): Jump to the address if the temporary character equals the operand.
+
+Terminal Operations
+BRK_PUT (0xE): Break execution and print the value from the keyboard.
+
+BRK_PUT_Z (0xE1): Break execution and print the character value from the Z register.
+
+BRK_PRINT_A (0xC1): Break execution and print the accumulator value (not character).
+
+STVC (0xF1): Set the VC value.
+
+STVR (0xF2): Set the VR value.
+
+IVC (0xF3): Increment VC (VC += 1).
+
+IVR (0xF4): Increment VR (VR += 1).
