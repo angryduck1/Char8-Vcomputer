@@ -1,5 +1,6 @@
 # About Computer
 CHAR 8 16 bit computer, have 4095 byte address rom space and 255 byte ram address space. He have 16 bit Registers: Accumulator, Z register, X register. Carry flag, Zero flag, Negative flag.  Terminal using for print char info or input and print char info. The terminal uses 16 columns and 33 line registers (y, x).
+
 ter# CPU Operations
 Below are the operations available for the CPU:
 
