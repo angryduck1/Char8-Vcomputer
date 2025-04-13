@@ -63,12 +63,12 @@ public:
 		}
 	}
 
-	void SET_ZF_NF_A() {
+	inline void SET_ZF_NF_A() {
 		ZF = (A == 0);
 		NF = (A & 0x8000) != 0;
 	}
 
-	void SET_ZF_NF_CF_A(Word& LA, Word& R, bool f) {
+	inline void SET_ZF_NF_CF_A(Word& LA, Word& R, bool f) {
 		ZF = (A == 0);
 		NF = (A & 0x8000) != 0;
 		switch (f) {
@@ -77,7 +77,7 @@ public:
 		}
 	}
 
-	void SET_INC_ST(Word& R) {
+	inline void SET_INC_ST(Word& R) {
 		++R;
 
 		ZF = (R == 0);
@@ -86,7 +86,7 @@ public:
 		CF = ((R - 1) & 0xFFFF) == 0xFFFF;
 	}
 
-	void SET_DEC_ST(Word& R) {
+	inline void SET_DEC_ST(Word& R) {
 		--R;
 
 		ZF = (R == 0);
@@ -95,21 +95,21 @@ public:
 		CF = ((R + 1) & 0xFFFF) == 0;
 	}
 
-	void SET_ZF_NF(Word& R) {
+	inline void SET_ZF_NF(Word& R) {
 		ZF = (R == 0);
 		NF = (R & 0x8000) != 0;
 	}
 
-	void WriteToStack(Memory& mem) {
+	inline void WriteToStack(Memory& mem) {
 		mem.memory[SP] = (PC + 2) & 0xFFFF;
 		++SP;
 	}
 
-	void RetFromStack(Memory& mem) {
+	inline void RetFromStack(Memory& mem) {
 		PC = mem.memory[--SP];
 	}
 
-	void PRINT(Terminal& t) {
+	inline void PRINT(Terminal& t) {
 		ClearBackground(DARKBLUE);
 
 		BeginDrawing();
@@ -133,7 +133,7 @@ public:
 		EndDrawing();
 	}
 
-	void PRINT_A(Memory& mem, Terminal &t) {
+	inline void PRINT_A(Memory& mem, Terminal& t) {
 		string c = to_string(A);
 		for (size_t i = 0; i < c.size(); ++i) {
 			t.coll[t.MASK_VC][t.MASK_VR + i] = c[i];
@@ -141,13 +141,13 @@ public:
 		}
 	}
 
-	Word Fetch_Byte(Memory& mem) {
+	inline Word Fetch_Byte(Memory& mem) {
 		Word Data = mem.memory[PC];
 		++PC;
 		return Data;
 	}
 
-	Word Fetch_Word(Memory& mem) {
+	inline Word Fetch_Word(Memory& mem) {
 		Word Data = mem.memory[PC];
 		++PC;
 
@@ -157,7 +157,7 @@ public:
 		return Data;
 	}
 
-	Word Read_RAM(Memory& mem, Byte& ByteAddress) {
+	inline Word Read_RAM(Memory& mem, Byte& ByteAddress) {
 		Word Data = mem.memory_ram[ByteAddress];
 		return Data;
 	}
@@ -165,11 +165,10 @@ public:
 		Byte Instr;
 		char a;
 		bool run = true;
-		bool is_jmpch = 0;
 		bool wait_click = 0;
 
 		InitWindow(800, 800, "Char8");
-		SetTargetFPS(90);
+		SetTargetFPS(1000);
 
 		while (!WindowShouldClose() && run == 1) {
 			PRINT(t);
@@ -177,29 +176,15 @@ public:
 			a = GetCharPressed();
 
 			if (wait_click && run) {
-				if (is_jmpch == 1) {
-					if (a == 0) {
-						wait_click = 1;
-						is_jmpch = 1;
-						continue;
-					}
-					else {
-						wait_click = 0;
-						is_jmpch = 0;
-						Byte ch = Fetch_Byte(mem);
-						Byte Address = Fetch_Word(mem);
-						if (a == ch) { PC = Address; }
-					}
+				if (a == 0) {
+					wait_click = 1;
+					continue;
 				}
 				else {
-					if (a == 0) {
-						wait_click = 1;
-						continue;
-					}
-					else {
-						wait_click = 0;
-						t.coll[t.MASK_VC][t.MASK_VR] = a;
-					}
+					wait_click = 0;
+					t.coll[t.MASK_VC][t.MASK_VR] = a;
+					Z = a;
+					a = '\0';
 				}
 			}
 
@@ -316,6 +301,14 @@ public:
 					++t.MASK_VR;
 				} break;
 
+				case DVC: {
+					--t.MASK_VC;
+				} break;
+
+				case DVR: {
+					--t.MASK_VR;
+				} break;
+
 				case RAC: {
 					Word LA = A;
 					A <<= 1;
@@ -361,7 +354,7 @@ public:
 					if (NF) { PC = Address; }
 				} break;
 
-				case JMPNCF: { 
+				case JMPNCF: {
 					Word Address = Fetch_Word(mem);
 					if (!CF) { PC = Address; }
 				} break;
@@ -376,20 +369,52 @@ public:
 					if (!NF) { PC = Address; }
 				} break;
 
+				case JMP_IF_A_BIG_THEN: {
+					Word Operand = Fetch_Word(mem);
+					Word Address = Fetch_Word(mem);
+					if (A > Operand) { PC = Address; }
+				} break;
+
+				case LRM: {
+					Word Value = Fetch_Word(mem);
+					Byte RAM_REG = Fetch_Byte(mem);
+
+					mem.memory_ram[RAM_REG] = Value;
+				} break;
+
+				case LRM_FR_A: {
+					Byte RAM_REG = Fetch_Byte(mem);
+					mem.memory_ram[RAM_REG] = A;
+				} break;
+
+				case LRM_FR_X: {
+					Byte RAM_REG = Fetch_Byte(mem);
+					mem.memory_ram[RAM_REG] = X;
+				} break;
+
+				case LRM_A: {
+					Byte RAM_REG = Fetch_Byte(mem);
+					A = mem.memory_ram[RAM_REG];
+				} break;
+
+				case LRM_X: {
+					Byte RAM_REG = Fetch_Byte(mem);
+					X = mem.memory_ram[RAM_REG];
+				} break;
+
 				case JMPCH: {
-					if (a == 0) {
-						wait_click = 1;
-						is_jmpch = 1;
-						continue;
-					}
-					else {
+					a = GetCharPressed();
+					if (a != '\0') {
 						Byte ch = Fetch_Byte(mem);
 						Byte Address = Fetch_Word(mem);
 						if (a == ch) { PC = Address; }
 					}
+					else {
+						PC += 3;
+					}
 				} break;
 
-				case BRK_PUT: {
+				case BRK_PUT_IN_Z: {
 					if (a == 0) {
 						wait_click = 1;
 						continue;
@@ -397,7 +422,13 @@ public:
 					else {
 						wait_click = 0;
 						t.coll[t.MASK_VC][t.MASK_VR] = a;
+						Z = a;
 					}
+				} break;
+
+				case BRK_PRINT_RAM: {
+					Byte RAM_REG = Fetch_Byte(mem);
+					t.coll[t.MASK_VC][t.MASK_VR] = mem.memory_ram[RAM_REG] & 0xFF;
 				} break;
 
 				case BRK_PRINT_A: {
@@ -411,6 +442,8 @@ public:
 				}
 
 				PRINT(t);
+
+				cout << hex << static_cast<int>(Instr) << endl;
 			}
 		}
 

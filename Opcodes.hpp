@@ -36,16 +36,35 @@ static constexpr uint8_t JMPNNF = 0xB7; // JMP to address if !CF
 static constexpr uint8_t JMPAC = 0xB8; // JMP to address if A == op
 static constexpr uint8_t JMPZ = 0xB9; // JMP to address if Z == op
 static constexpr uint8_t JMPCH = 0xBA; // JMP to address if TEMP CHAR == op
+static constexpr uint8_t JMP_IF_A_BIG_THEN = 0xEB; // JMP to address if A > op
+
+
+//////////////////////////////////////
+//RAM OPCODES
+
+static constexpr uint8_t PUT_MEM_CHAR = 0xF5; // Set char in ram
+
+static constexpr uint8_t LRM = 0xF6; // Set ram value
+static constexpr uint8_t LRM_FR_A = 0xF9; // Set ram value from A
+static constexpr uint8_t LRM_FR_X = 0xFA; // Set ram value from X
+
+static constexpr uint8_t LRM_A = 0xF7; // Transfer ram value in A
+static constexpr uint8_t LRM_X = 0xF8; // Transfer ram value in X 
+
 
 //////////////////////////////////////
 //TERMINAL OPCODES
 
-static constexpr uint8_t BRK_PUT = 0xE; // Break and PRINT value from keyboard
+static constexpr uint8_t BRK_PUT_IN_Z = 0xE; // Break and PRINT value from keyboard and input in Z
 static constexpr uint8_t BRK_PUT_Z = 0xE1; // Break and PRINT Z char value
 static constexpr uint8_t BRK_PRINT_A = 0xC1; // Break and PRINT A value (not char)
+static constexpr uint8_t BRK_PRINT_RAM = 0xC2; // Break and PRINT A ram reg info
 
 static constexpr uint8_t STVC = 0xF1; // Set VC value
 static constexpr uint8_t STVR = 0xF2; // Set VR value
 
 static constexpr uint8_t IVC = 0xF3; // VC += 1
 static constexpr uint8_t IVR = 0xF4; // VR += 1
+
+static constexpr uint8_t DVC = 0xFB; // VC -= 1
+static constexpr uint8_t DVR = 0xFC; // VR -= 1

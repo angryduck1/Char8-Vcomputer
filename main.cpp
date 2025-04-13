@@ -16,6 +16,6 @@ int main() {
     Terminal t;
 
     cpu.Reset(mem);
-    cpu.Load_ROM("test.bin", mem, 0xFFF);
+    cpu.Load_ROM("gametest.bin", mem, 0xFFF);
     cpu.Execute(mem, t);
 }
